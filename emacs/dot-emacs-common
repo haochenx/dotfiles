@@ -30,7 +30,9 @@
 
 ; Configure ido-mode
 (require 'ido-vertical-mode)
+(ido-mode t)
 (ido-vertical-mode 1)
+(setq ido-vertical-define-keys 'C-n-and-C-p-only)
 
 (setq linum-format "%d ")
 (global-linum-mode 1)
@@ -47,6 +49,7 @@
 
 (global-set-key (kbd "M-\\") "λ")
 (electric-pair-mode t)
+(show-paren-mode t)
 
 (require 'ox-latex)
 (plist-put org-format-latex-options :scale 1.5)
