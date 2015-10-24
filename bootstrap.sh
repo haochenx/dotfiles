@@ -2,8 +2,9 @@
 set -e
 
 function configure_base {
-    GIT_ROOT=$(git rev-parse --show-toplevel)
-    GIT_DIR=$(git rev-parse --git-dir)
+    SCRIPT_DIR=$(dirname $0)
+    GIT_ROOT=$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel)
+    GIT_DIR="$SCRIPT_DIR/$(git -C "$SCRIPT_DIR" rev-parse --git-dir)"
 
     export HXDOTFILES_DIR="$GIT_ROOT"
 }
@@ -34,9 +35,10 @@ function configure_cygwin {
 }
 
 function install_cygwin {
-    loge "WARNING: Installation on cygwin is not supported yet."
-    loge "         only base installation would be executed, which"
-    loge "         may not function correctly."
+    loge "!!WARN: Installation on cygwin is not supported yet."
+    loge "        only base installation would be executed, which"
+    loge "        may not function correctly."
+    loge
 
     configure_base
     configure_cygwin
@@ -44,7 +46,7 @@ function install_cygwin {
 }
 
 function loge {
-    echo $* >&2
+    echo "$*" >&2
 }
 
 function show {

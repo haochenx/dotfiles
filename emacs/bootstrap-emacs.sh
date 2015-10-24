@@ -14,7 +14,7 @@ fi
 
 if [ -f ~/.emacs -a ! -L ~/.emacs ]; then
     loge "!!WARN backing up ~/.emacs to ~/.emacs.bak"
-    exit 1
+    mv ~/.emacs ~/.emacs.bak
 else
     loge "~/.emacs is already dotfilized"
 fi
