@@ -1,0 +1,111 @@
+;; -*- mode: emacs-lisp -*-
+
+(defun load-file-if-exists (path)
+  (if (file-exists-p path)
+      (load-file path)
+    nil))
+
+(load-file-if-exists "~/.emacs.platform")
+(load-file-if-exists "~/.emacs.local")
+
+; Additional Repositories
+(require 'package)
+(add-to-list 'package-archives
+	     '("marmalade" . "http://marmalade-repo.org/packages/") t)
+(add-to-list 'package-archives
+	     '("melpa" . "http://melpa.org/packages/") t)
+(add-to-list 'package-archives
+	     '("gnu" . "http://elpa.gnu.org/packages/") t)
+
+(package-initialize)
+
+; Configure ido-mode
+(require 'ido-vertical-mode)
+(ido-vertical-mode 1)
+
+(setq linum-format "%d ")
+(global-linum-mode 1)
+
+(column-number-mode t)
+
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+
+(exec-path-from-shell-initialize)
+
+;; ;; for Proof General
+;; (load-file "/usr/local/share/emacs/site-lisp/ProofGeneral/generic/proof-site.el")
+;; (setq coq-prog-name "/usr/local/bin/coqtop")
+
+(global-set-key (kbd "M-\\") "λ")
+(electric-pair-mode t)
+
+(require 'ox-latex)
+(plist-put org-format-latex-options :scale 1.5)
+(add-to-list 'org-latex-packages-alist
+             '("" "tikz" t))
+(eval-after-load "preview"
+  '(add-to-list 'preview-default-preamble "\\PreviewEnvironment{tikzpicture} t"))
+(setq org-latex-create-formula-image-program 'imagemagick)
+;; active Babel languages
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((R . t)
+   (latex . t)
+   (ditaa . t)
+   (C . t)
+;;   (asymptote . t)
+   ))
+(setf org-html-mathjax-options
+      '((path "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_SVG")))
+(setf org-html-mathjax-template
+      "<script type=\"text/javascript\" src=\"%PATH\"></script>")
+(defmacro by-backend (&rest body)
+  `(case (if (boundp 'backend) (org-export-backend-name backend) nil) ,@body))
+(setq org-confirm-babel-evaluate nil)
+(setq org-babel-latex-htlatex "htlatex")
+
+(put 'narrow-to-region 'disabled nil)
+
+(if (file-exists-p "/usr/local/share/asymptote")
+    (progn
+      (add-to-list 'load-path "/usr/local/share/asymptote")
+      (autoload 'asy-mode "asy-mode.el" "Asymptote major mode." t)
+      (autoload 'lasy-mode "asy-mode.el" "hybrid Asymptote/Latex major mode." t)
+      (autoload 'asy-insinuate-latex "asy-mode.el" "Asymptote insinuate LaTeX." t)
+      (add-to-list 'auto-mode-alist '("\\.asy$" . asy-mode))))
+
+;; emacs-mac specific settings
+(setq mac-command-modifier nil)
+(setq mac-option-modifier 'meta)
+
+;; HTML related
+(require 'emmet-mode)
+(add-hook 'sgml-mode-hook 'emmet-mode)
+(add-hook 'css-mode-hook 'emmet-mode)
+(add-hook 'emmet-mode-hook (lambda () (setq emmet-indention 2)))
+(eval-after-load "emmet-mode"
+  '(define-key emmet-mode-keymap (kbd "TAB") nil))
+(eval-after-load "emmet-mode"
+  '(define-key emmet-mode-keymap (kbd "C-j") nil))
+; (keyboard-translate ?\C-i ?\C-i)
+; (eval-after-load "emmet-mode"
+;   '(define-key emmet-mode-keymap (kbd "H-i") 'emmet-expand-line))
+
+;; spelling check related
+(setq ispell-program-name "aspell")
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(safe-local-variable-values
+   (quote
+    ((eval orgtbl-mode t)
+     (TeX-parse-self . t)
+     (whitespace-line-column . t)
+     (lexical-binding . t)))))
+
+;; bind M-g M-s to magit-status
+(global-set-key (kbd "M-g M-s") (quote magit-status))
+

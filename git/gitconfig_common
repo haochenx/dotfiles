@@ -1,0 +1,20 @@
+[push]
+	default = simple
+
+[alias]
+    st = status
+    ci = commit
+    cm = commit -sm
+    ca = commit --amend
+    cmS = commit -S -sm
+    br = branch
+    co = checkout
+    df = diff
+    ds = diff --staged
+    lg = log -p
+    lol = log --graph --decorate --pretty=oneline --abbrev-commit
+    lola = log --graph --decorate --pretty=oneline --abbrev-commit --all --date=local
+    ls = ls-files
+ 
+    # Show files ignored by git:
+    ign = ls-files -o -i --exclude-standard

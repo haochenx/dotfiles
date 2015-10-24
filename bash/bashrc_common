@@ -1,0 +1,10 @@
+# -*- mode: shell-script -*-
+
+# prompt
+export PS1="[\[$(tput sgr0)\]\[\033[38;5;128m\]\u\[$(tput sgr0)\]@\[\033[38;5;26m\]\H\[$(tput sgr0)\]]\[\033[38;5;15m\] \[$(tput sgr0)\]\[\033[38;5;64m\]\w\[$(tput sgr0)\]\[\033[38;5;15m\]\n\[$(tput sgr0)\]\[\033[38;5;112m\]\$?\[$(tput sgr0)\] \\$ "
+
+# environment variables
+export EDITOR='emacs -nw'
+
+# aliases
+alias ls='ls --color=auto -F'

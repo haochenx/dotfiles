@@ -1,0 +1,4 @@
+# -*- mode: shell-script -*-
+
+# override alias of ls
+alias ls='ls -GF'
