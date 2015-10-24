@@ -99,9 +99,8 @@
   '(define-key emmet-mode-keymap (kbd "TAB") nil))
 (eval-after-load "emmet-mode"
   '(define-key emmet-mode-keymap (kbd "C-j") nil))
-; (keyboard-translate ?\C-i ?\C-i)
-; (eval-after-load "emmet-mode"
-;   '(define-key emmet-mode-keymap (kbd "H-i") 'emmet-expand-line))
+(eval-after-load "emmet-mode"
+  '(define-key emmet-mode-keymap (kbd "C-i") 'emmet-expand-line))
 
 ;; spelling check related
 (setq ispell-program-name "aspell")
