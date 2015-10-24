@@ -4,9 +4,9 @@
 [alias]
     st = status
     ci = commit
-    cm = commit -sm
+    cm = commit -m
     ca = commit --amend
-    cmS = commit -S -sm
+    cmS = commit -S -m
     br = branch
     co = checkout
     df = diff
