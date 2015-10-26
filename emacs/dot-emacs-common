@@ -96,11 +96,15 @@
 (add-hook 'css-mode-hook 'emmet-mode)
 (add-hook 'emmet-mode-hook (lambda () (setq emmet-indention 2)))
 (eval-after-load "emmet-mode"
-  '(define-key emmet-mode-keymap (kbd "TAB") nil))
+  '(define-key emmet-mode-keymap (kbd "TAB") 'indent-for-tab-command))
 (eval-after-load "emmet-mode"
   '(define-key emmet-mode-keymap (kbd "C-j") nil))
 (eval-after-load "emmet-mode"
-  '(define-key emmet-mode-keymap (kbd "C-i") 'emmet-expand-line))
+  '(define-key emmet-mode-keymap (kbd "C-i") nil))
+(eval-after-load "emmet-mode"
+  '(progn
+     (keyboard-translate ?\C-i ?\H-i)
+     (define-key emmet-mode-keymap (kbd "H-i") 'emmet-expand-line)))
 
 ;; spelling check related
 (setq ispell-program-name "aspell")
