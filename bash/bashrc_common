@@ -8,3 +8,8 @@ export EDITOR='emacs -nw'
 
 # aliases
 alias ls='ls --color=auto -F'
+
+# regarding history
+HISTSIZE=10000
+HISTFILESIZE=10000
+
