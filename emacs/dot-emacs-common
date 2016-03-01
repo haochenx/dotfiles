@@ -21,7 +21,7 @@
 (package-initialize)
 
 ;; Install required packages
-(let ((package-list '(ido-vertical-mode haskell-mode emmet-mode exec-path-from-shell)))
+(let ((package-list '(ido-vertical-mode haskell-mode emmet-mode exec-path-from-shell magit-gerrit antlr-mode ansi-color)))
   (dolist (package package-list)
     (unless (package-installed-p package)
       (unless package-archive-contents
