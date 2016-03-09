@@ -23,7 +23,7 @@
 (package-initialize)
 
 ;; Install required packages
-(let ((package-list '(magit ido-vertical-mode haskell-mode emmet-mode exec-path-from-shell auctex gradle-mode groovy-mode scala-mode markdown-mode antlr-mode)))
+(let ((package-list '(ido-vertical-mode haskell-mode emmet-mode exec-path-from-shell magit magit-gerrit auctex gradle-mode groovy-mode scala-mode markdown-mode antlr-mode ansi-color)))
   (dolist (package package-list)
     (unless (package-installed-p package)
       (unless package-archive-contents
@@ -42,6 +42,8 @@
 (column-number-mode t)
 
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+(add-hook 'haskell-mode-hook 'haskell-indentation-mode)
+(add-hook 'haskell-mode-hook 'interactive-haskell-mode)
 
 (exec-path-from-shell-initialize)
 
@@ -87,6 +89,19 @@
       (autoload 'lasy-mode "asy-mode.el" "hybrid Asymptote/Latex major mode." t)
       (autoload 'asy-insinuate-latex "asy-mode.el" "Asymptote insinuate LaTeX." t)
       (add-to-list 'auto-mode-alist '("\\.asy$" . asy-mode))))
+
+(defun remove-org-newlines-at-cjk-text (&optional _mode)
+  "先頭が '*', '#', '|' でなく、改行の前後が日本の文字の場合はその改行を除去する。"
+  (interactive)
+  (goto-char (point-min))
+  (while (re-search-forward "^\\([^|#*\n].+\\)\\(.\\)\n *\\(.\\)" nil t)
+    (if (and (> (string-to-char (match-string 2)) #x2000)
+               (> (string-to-char (match-string 3)) #x2000))
+        (replace-match "\\1\\2\\3"))
+    (goto-char (point-at-bol))))
+
+(with-eval-after-load "ox"
+  (add-hook 'org-export-before-processing-hook 'remove-org-newlines-at-cjk-text))
 
 ;; emacs-mac specific settings
 (setq mac-command-modifier nil)
