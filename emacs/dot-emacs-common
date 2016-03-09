@@ -9,6 +9,8 @@
 (load-file-if-exists "~/.emacs.platform")
 (load-file-if-exists "~/.emacs.local")
 
+(setq ring-bell-function 'ignore)
+
 ;; Additional Repositories
 (require 'package)
 (add-to-list 'package-archives
