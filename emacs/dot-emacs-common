@@ -21,7 +21,7 @@
 (package-initialize)
 
 ;; Install required packages
-(let ((package-list '(ido-vertical-mode haskell-mode emmet-mode exec-path-from-shell)))
+(let ((package-list '(magit ido-vertical-mode haskell-mode emmet-mode exec-path-from-shell auctex gradle-mode groovy-mode scala-mode markdown-mode antlr-mode)))
   (dolist (package package-list)
     (unless (package-installed-p package)
       (unless package-archive-contents
