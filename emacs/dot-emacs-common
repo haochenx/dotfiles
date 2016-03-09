@@ -126,3 +126,9 @@
 ;; bind M-g M-s to magit-status
 (global-set-key (kbd "M-g M-s") (quote magit-status))
 
+;; automatically enabling flyspell-mode and auto-fill-mode in some modes
+(dolist (hook '(text-mode-hook))
+  (add-hook hook (lambda () (flyspell-mode 1))))
+(dolist (hook '(text-mode-hook))
+  (add-hook hook (lambda () (auto-fill-mode 1))))
+
