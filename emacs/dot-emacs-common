@@ -124,6 +124,7 @@
      (lexical-binding . t)))))
 
 ;; bind M-g M-s to magit-status
+(require 'magit)
 (global-set-key (kbd "M-g M-s") (quote magit-status))
 
 ;; automatically enabling flyspell-mode and auto-fill-mode in some modes
