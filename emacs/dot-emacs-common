@@ -40,6 +40,8 @@
 (column-number-mode t)
 
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+(autoload 'haskell-mode "haskell-mode" nil t)
+(autoload 'haskell-cabal "haskell-cabal" nil t)
 
 (exec-path-from-shell-initialize)
 
