@@ -30,6 +30,16 @@ function install_osx {
     install_base
 }
 
+function configure_linux {
+    export PLATFORM=linux
+}
+
+function install_linux {
+    configure_base
+    configure_linux
+    install_base
+}
+
 function configure_cygwin {
     export PLATFORM=cygwin
 }
@@ -73,6 +83,9 @@ function main {
                 cygwin)
                     install_cygwin
                     ;;
+                linux)
+                    install_linux
+                    ;;
                 *)
                     show_help_install
             esac
@@ -99,7 +112,7 @@ function show_help_main {
 }
 
 function show_help_install {
-    loge "usage: bootstrap.sh install {osx,cygwin}"
+    loge "usage: bootstrap.sh install {osx,cygwin,linux}"
 }
 
 main $*

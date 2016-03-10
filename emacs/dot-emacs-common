@@ -9,6 +9,8 @@
 (load-file-if-exists "~/.emacs.platform")
 (load-file-if-exists "~/.emacs.local")
 
+(setq ring-bell-function 'ignore)
+
 ;; Additional Repositories
 (require 'package)
 (add-to-list 'package-archives
@@ -21,7 +23,7 @@
 (package-initialize)
 
 ;; Install required packages
-(let ((package-list '(ido-vertical-mode haskell-mode emmet-mode exec-path-from-shell magit-gerrit antlr-mode ansi-color)))
+(let ((package-list '(ido-vertical-mode haskell-mode emmet-mode exec-path-from-shell magit magit-gerrit auctex gradle-mode groovy-mode scala-mode markdown-mode antlr-mode ansi-color)))
   (dolist (package package-list)
     (unless (package-installed-p package)
       (unless package-archive-contents
@@ -40,8 +42,8 @@
 (column-number-mode t)
 
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-(autoload 'haskell-mode "haskell-mode" nil t)
-(autoload 'haskell-cabal "haskell-cabal" nil t)
+(add-hook 'haskell-mode-hook 'haskell-indentation-mode)
+(add-hook 'haskell-mode-hook 'interactive-haskell-mode)
 
 (exec-path-from-shell-initialize)
 
@@ -137,5 +139,12 @@
      (lexical-binding . t)))))
 
 ;; bind M-g M-s to magit-status
+(require 'magit)
 (global-set-key (kbd "M-g M-s") (quote magit-status))
+
+;; automatically enabling flyspell-mode and auto-fill-mode in some modes
+(dolist (hook '(text-mode-hook))
+  (add-hook hook (lambda () (flyspell-mode 1))))
+(dolist (hook '(text-mode-hook))
+  (add-hook hook (lambda () (auto-fill-mode 1))))
 
