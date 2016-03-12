@@ -30,6 +30,9 @@
         (package-refresh-contents))
       (package-install package))))
 
+(setq-default abbrev-mode t)
+(global-set-key (kbd "C-'") 'expand-abbrev)
+
 ; Configure ido-mode
 (require 'ido-vertical-mode)
 (ido-mode t)
@@ -147,4 +150,11 @@
   (add-hook hook (lambda () (flyspell-mode 1))))
 (dolist (hook '(text-mode-hook))
   (add-hook hook (lambda () (auto-fill-mode 1))))
+
+;; settings for javascript-mode
+(add-hook 'js-mode-hook
+          (lambda ()
+            (push '("function " . ?ƒ) prettify-symbols-alist)
+            (push '("return" . ?^) prettify-symbols-alist)
+            (prettify-symbols-mode)))
 
