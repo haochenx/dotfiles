@@ -1,29 +1,23 @@
 ;; -*- mode: emacs-lisp -*-
 
-;; include local and platform profile
-(defun load-file-if-exists (path)
-  (if (file-exists-p path)
-      (load-file path)
-    nil))
-
-(load-file-if-exists "~/.emacs.platform")
-(load-file-if-exists "~/.emacs.local")
-
-(setq ring-bell-function 'ignore)
+(setq-default indent-tabs-mode nil)
+(tool-bar-mode -1)
+(global-set-key "\C-h" `delete-backward-char)
+(setq make-backup-files nil) ; stop creating ~ files
 
 ;; Additional Repositories
 (require 'package)
+;; (add-to-list 'package-archives
+;; 	     '("marmalade" . "http://marmalade-repo.org/packages/") t)
 (add-to-list 'package-archives
-	     '("marmalade" . "http://marmalade-repo.org/packages/") t)
+	     '("melpa" . "https://melpa.org/packages/") t)
 (add-to-list 'package-archives
-	     '("melpa" . "http://melpa.org/packages/") t)
-(add-to-list 'package-archives
-	     '("gnu" . "http://elpa.gnu.org/packages/") t)
+	     '("gnu" . "https://elpa.gnu.org/packages/") t)
 
 (package-initialize)
 
 ;; Install required packages
-(let ((package-list '(ido-vertical-mode haskell-mode emmet-mode exec-path-from-shell magit magit-gerrit auctex gradle-mode groovy-mode scala-mode markdown-mode antlr-mode ansi-color)))
+(let ((package-list '(auto-complete ido-vertical-mode haskell-mode emmet-mode exec-path-from-shell magit magit-gerrit auctex gradle-mode groovy-mode scala-mode markdown-mode antlr-mode ansi-color deferred ocp-indent tuareg yaml-mode xterm-color)))
   (dolist (package package-list)
     (unless (package-installed-p package)
       (unless package-archive-contents
@@ -54,7 +48,9 @@
 ;; (load-file "/usr/local/share/emacs/site-lisp/ProofGeneral/generic/proof-site.el")
 ;; (setq coq-prog-name "/usr/local/bin/coqtop")
 
+(global-set-key (kbd "C-S-o") 'other-frame)
 (global-set-key (kbd "M-\\") "λ")
+(global-set-key (kbd "C-M-\\") "Λ")
 (electric-pair-mode t)
 (show-paren-mode t)
 
@@ -129,17 +125,31 @@
 ;; spelling check related
 (setq ispell-program-name "aspell")
 
+(require 'ps-print)
+(setq ps-lpr-switches (quote ("-o media=A4")))
+(setq ps-line-number t)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(TeX-view-program-list (quote (("TeXShop" ("open -aTeXShop %o")))))
+ '(TeX-view-program-selection (quote ((output-pdf "TeXShop"))))
+ '(column-number-mode t)
+ '(package-selected-packages
+   (quote
+    (ocp-indent xterm-color cmake-mode yaml-mode proof-general dockerfile-mode clojure-mode livereload deferred dune auto-complete tuareg ddskk-posframe ddskk paredit pipenv hy-mode company markdown-mode scala-mode groovy-mode gradle-mode auctex magit-gerrit magit exec-path-from-shell emmet-mode haskell-mode ido-vertical-mode)))
  '(safe-local-variable-values
    (quote
-    ((eval orgtbl-mode t)
+    ((cider-shadow-cljs-default-options . "app")
+     (cider-default-cljs-repl . shadow)
+     (eval orgtbl-mode t)
      (TeX-parse-self . t)
      (whitespace-line-column . t)
-     (lexical-binding . t)))))
+     (lexical-binding . t))))
+ '(show-paren-mode t)
+ '(tool-bar-mode nil))
 
 ;; bind M-g M-s to magit-status
 (require 'magit)
@@ -152,9 +162,50 @@
   (add-hook hook (lambda () (auto-fill-mode 1))))
 
 ;; settings for javascript-mode
+(setq js-indent-level 2)
 (add-hook 'js-mode-hook
           (lambda ()
             (push '("function " . ?ƒ) prettify-symbols-alist)
-            (push '("return" . ?^) prettify-symbols-alist)
+            (push '("return " . ?^) prettify-symbols-alist)
             (prettify-symbols-mode)))
+
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(gopcaml-zipper-face ((t (:background "light green")))))
+
+;; include local and platform profile
+(defun load-file-if-exists (path)
+  (if (file-exists-p path)
+      (load-file path)
+    nil))
+
+(load-file-if-exists "~/.emacs.platform")
+(load-file-if-exists "~/.emacs.local")
+
+(setq ring-bell-function 'ignore)
+
+;; configure web mode
+(setq-default css-indent-offset 2)
+
+;; configure compilation window
+(require 'ansi-color)
+(defun colorize-compilation-buffer ()
+  (toggle-read-only)
+  (ansi-color-apply-on-region compilation-filter-start (point))
+  (toggle-read-only))
+(add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+
+(require 'xterm-color)
+(setq compilation-environment '("TERM=xterm-256color"))
+
+
+(defun sync-theme ()
+  "Sync color theme for console/gui"
+  (interactive)
+  (if (display-graphic-p)
+      (disable-theme 'deeper-blue)
+    (enable-theme 'deeper-blue)))
 
