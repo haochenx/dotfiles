@@ -26,4 +26,8 @@ if [ -f ~/.bashrc_local ]; then
     source ~/.bashrc_local
 fi
 
+# dune related aliases
+alias bb="dune build"
+alias bbt="dune build @runtest"
+alias bbr="dune build && echo && OCAMLRUNPARAM=b "
 
