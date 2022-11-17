@@ -1,0 +1,18 @@
+# -*- mode: gitignore; -*-
+
+## macOS General, adopted from
+## https://github.com/github/gitignore/blob/main/Global/macOS.gitignore
+.DS_Store
+.AppleDouble
+.LSOverride
+
+## Emacs General, adopted from
+## https://github.com/github/gitignore/blob/main/Global/Emacs.gitignore
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*

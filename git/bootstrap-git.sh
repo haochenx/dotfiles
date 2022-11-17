@@ -14,6 +14,7 @@ fi
 
 set -x
 git config --global include.path "$HXDOTFILES_DIR/git/gitconfig_common"
+git config --global core.excludesFile "$HXDOTFILES_DIR/git/gitignore_global"
 
 { set +x; } 2> /dev/null
 loge
