@@ -23,5 +23,7 @@
 
     stat = show HEAD --stat
 
+    fa = fetch --all
+
     # Show files ignored by git:
     ign = ls-files -o -i --exclude-standard
