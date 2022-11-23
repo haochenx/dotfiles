@@ -24,6 +24,7 @@
     stat = show HEAD --stat
 
     fa = fetch --all
+    mff = merge --ff-only
 
     # Show files ignored by git:
     ign = ls-files -o -i --exclude-standard
