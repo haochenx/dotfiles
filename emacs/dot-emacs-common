@@ -5,6 +5,20 @@
 (global-set-key "\C-h" `delete-backward-char)
 (setq make-backup-files nil) ; stop creating ~ files
 
+;; my keymap
+(defun hx/duplicate-current-line()
+  (interactive)
+  (let ((p (point)))
+    (move-beginning-of-line 1)
+    (kill-line)
+    (yank)
+    (open-line 1)
+    (next-line 1)
+    (yank)
+    (goto-char p))
+)
+(global-set-key (kbd "C-M-j") 'hx/duplicate-current-line)
+
 ;; Additional Repositories
 (require 'package)
 ;; (add-to-list 'package-archives
