@@ -17,7 +17,7 @@
 (package-initialize)
 
 ;; Install required packages
-(let ((package-list '(auto-complete ido-vertical-mode haskell-mode emmet-mode exec-path-from-shell magit magit-gerrit auctex gradle-mode groovy-mode scala-mode markdown-mode antlr-mode ansi-color deferred ocp-indent tuareg yaml-mode xterm-color)))
+(let ((package-list '(auto-complete ido-vertical-mode haskell-mode emmet-mode exec-path-from-shell magit magit-gerrit auctex gradle-mode groovy-mode scala-mode markdown-mode antlr-mode ansi-color deferred ocp-indent tuareg dune yaml-mode xterm-color)))
   (dolist (package package-list)
     (unless (package-installed-p package)
       (unless package-archive-contents
