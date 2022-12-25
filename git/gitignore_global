@@ -16,3 +16,6 @@
 auto-save-list
 tramp
 .\#*
+
+## JetBrains General
+.idea/
