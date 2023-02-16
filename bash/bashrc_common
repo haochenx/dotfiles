@@ -32,6 +32,10 @@ alias bbt="dune build @runtest"
 alias bbr="dune build && echo && OCAMLRUNPARAM=b "
 
 function caml() {
-  echo 'eval' '$(opam env --set-switch' "--switch=\"$1\")"
-  eval $(opam env --set-switch --switch="$1")
+  if [ $# -eq 0 ]; then
+    opam switch
+  else
+    echo 'eval' '$(opam env --set-switch' "--switch=\"$1\")"
+    eval $(opam env --set-switch --switch="$1")
+  fi
 }
