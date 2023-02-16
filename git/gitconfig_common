@@ -32,5 +32,8 @@
     fam = !git fetch --all && git merge --ff-only
     fams = !git fetch --all && git merge --ff-only && git submodule update --init
 
+    subu = submodule update --init
+    subur = submodule update --init --recursive
+
     # Show files ignored by git:
     ign = ls-files -o -i --exclude-standard
