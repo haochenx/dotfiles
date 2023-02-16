@@ -6,6 +6,10 @@
     lg = log -p
     co = checkout
     ls = ls-files
+    au = update-index --assume-unchanged
+    ua = update-index --no-assume-unchanged
+    uaa = ! git ls-files -v | grep '^[a-z]' | cut -c3- | xargs git uau --
+    ast = ! git uaa && git status
 
     df = diff
     ds = diff --staged
