@@ -1,7 +1,13 @@
 # -*- mode: shell-script -*-
 
 # prompt
-export PS1="[\[$(tput sgr0)\]\[\033[38;5;128m\]\u\[$(tput sgr0)\]@\[\033[38;5;26m\]\H\[$(tput sgr0)\] 🐪 \033[33m\]\$(opam switch show || echo "??")\[$(tput sgr0)\]]\[\033[38;5;15m\] \[$(tput sgr0)\]\[\033[38;5;64m\]\w\[$(tput sgr0)\]\[\033[38;5;15m\]\n\[$(tput sgr0)\]\[\033[38;5;112m\]\$?\[$(tput sgr0)\] \\$ "
+function _ps1_show_opam_switch() {
+  exit_code=$?
+  opam switch show || echo "??"
+  return $exit_code
+}
+
+export PS1="[\[$(tput sgr0)\]\[\033[38;5;128m\]\u\[$(tput sgr0)\]@\[\033[38;5;26m\]\H\[$(tput sgr0)\] 🐪 \033[33m\]\$(_ps1_show_opam_switch)\[$(tput sgr0)\]]\[\033[38;5;15m\] \[$(tput sgr0)\]\[\033[38;5;64m\]\w\[$(tput sgr0)\]\[\033[38;5;15m\]\n\[$(tput sgr0)\]\[\033[38;5;112m\]\$?\[$(tput sgr0)\] \\$ "
 
 # environment variables
 export EDITOR='mg'
