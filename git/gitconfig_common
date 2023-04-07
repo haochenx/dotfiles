@@ -8,7 +8,7 @@
     ls = ls-files
     au = update-index --assume-unchanged
     ua = update-index --no-assume-unchanged
-    uaa = ! git ls-files -v | grep '^[a-z]' | cut -c3- | xargs git uau --
+    uaa = ! git ls-files -v | grep '^[a-z]' | cut -c3- | xargs git ua --
     ast = ! git uaa && git status
 
     df = diff
@@ -24,6 +24,7 @@
 
     lol = log --graph --decorate --pretty=oneline --abbrev-commit
     lola = log --graph --decorate --pretty=oneline --abbrev-commit --all --date=local
+    bb = !git reflog | grep 'checkout: moving from' | cut -d' ' -f 6 | awk '!seen[$0]++' | head
 
     stat = show HEAD --stat
 
@@ -31,6 +32,8 @@
     mff = merge --ff-only
     fam = !git fetch --all && git merge --ff-only
     fams = !git fetch --all && git merge --ff-only && git submodule update --init
+    fco = !git fa && git co
+    fcom = "!git fa && git co \"$1\" && git mff #"
 
     subu = submodule update --init
     subur = submodule update --init --recursive
