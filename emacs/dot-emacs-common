@@ -61,15 +61,88 @@
 
 ;; Configure projectile
 (require 'projectile)
-(require 'projectile-mode)
 (projectile-global-mode)
 (setq projectile-completion-system 'ido)
 (setq projectile-sort-order 'recentf-active)
 (setq projectile-enable-caching t)
 (setq projectile-file-exists-remote-cache-expire (* 1 60))
 
+(setq-default mode-line-format
+              (mapcar (lambda (elem)
+                        (cond
+                         ((eq elem 'mode-line-buffer-identification)
+                          '(:eval
+                            (if (buffer-file-name)
+                                (propertized-buffer-identification
+                                   (let* ((project-name (projectile-project-name))
+                                          (project-root (projectile-project-root))
+                                          (path-indicator (file-relative-name buffer-file-name project-root)))
+                                     (if (and project-name path-indicator)
+                                         (concat " " project-name " - " path-indicator)
+                                       (concat " : %12b"))))
+                                "%12b")))
+                         (t elem)))
+                      mode-line-format))
+
 (global-set-key (kbd "M-p") 'projectile-commander)
 (global-set-key (kbd "C-M-g") 'projectile-find-file)
+
+(defvar windows-before-compilation 0
+  "Remember list of windows before compilation starts.")
+
+(defun bury-compilation-buffer-if-successful-start-hook (proc)
+  (message (concat "hello? " (length (window-list))))
+  (setq windows-before-compilation (length (window-list))))
+
+(defun bury-compile-buffer-if-successful (buffer string)
+ "Close or focus the compilation buffer depending on the compilation result and user input.
+  If the compilation is successful without warnings, it prompts the user to close the
+  compilation window. If the user selects 'n', the focus moves to the compilation window.
+  If the compilation fails, the focus automatically moves to the compilation window."
+ (if (and
+       (buffer-live-p buffer)
+       (string-match "compilation" (buffer-name buffer))
+       (string-match "finished" string)
+       (with-current-buffer buffer
+         (goto-char (point-min))
+         (search-forward "Compilation finished" nil t)))
+      (if (y-or-n-p "Close the compilation window? ")
+          (let (;; (new-window-created
+                ;;  (not
+                ;;   (equal
+                ;;   (length (window-list))
+                ;;   windows-before-compilation)))
+                (; we now force the compilation output window using a side window,
+                 ; so there is no need to keep track and we could always close it
+                 new-window-created t))
+            (if new-window-created
+                (progn
+                  (delete-window (get-buffer-window buffer)))
+              (switch-to-prev-buffer (get-buffer-window buffer) 'kill))
+            )
+        (select-window (get-buffer-window buffer)))
+    (progn
+      (select-window (get-buffer-window buffer))
+      (message "Compilation failed.")))
+ (remove-hook 'compilation-finish-functions 'bury-compile-buffer-if-successful)
+ (setq windows-before-compilation 0))
+
+(defun my-compile ()
+  (interactive)
+  (add-hook 'compilation-finish-functions 'bury-compile-buffer-if-successful)
+  (setq windows-before-compilation (length (window-list)))
+  (let ((process-environment (cons "CLICOLOR=0" process-environment)))
+    (call-interactively #'compile)))
+
+(require 'bind-key)
+(require 'tuareg)
+(bind-key (kbd "C-c C-c") 'my-compile)
+(define-key tuareg-mode-map (kbd "C-c C-c") 'my-compile)
+
+(push '("\\*compilation\\*"
+        display-buffer-in-side-window
+        (side . bottom) (slot . 1) (preserve-size . (nil . t)))
+      display-buffer-alist)
 
 ; project subtree
 ; adopted from https://blog.mads-hartmann.com/2016/05/12/emacs-tree-view.html
