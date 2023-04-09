@@ -4,6 +4,7 @@
 (tool-bar-mode -1)
 (global-set-key "\C-h" `delete-backward-char)
 (setq make-backup-files nil) ; stop creating ~ files
+(defalias 'yes-or-no-p 'y-or-n-p)
 
 ;; my keymap
 (defun hx/duplicate-current-line()
@@ -31,7 +32,7 @@
 (package-initialize)
 
 ;; Install required packages
-(let ((package-list '(auto-complete ido-vertical-mode haskell-mode emmet-mode exec-path-from-shell magit magit-gerrit auctex gradle-mode groovy-mode scala-mode markdown-mode antlr-mode ansi-color deferred ocp-indent tuareg dune yaml-mode xterm-color)))
+(let ((package-list '(auto-complete ido-vertical-mode haskell-mode emmet-mode exec-path-from-shell magit magit-gerrit auctex gradle-mode groovy-mode scala-mode typescript-mode markdown-mode antlr-mode ansi-color deferred ocp-indent tuareg dune yaml-mode xterm-color use-package projectile dired-subtree ag)))
   (dolist (package package-list)
     (unless (package-installed-p package)
       (unless package-archive-contents
@@ -58,11 +59,121 @@
 
 (exec-path-from-shell-initialize)
 
+;; Configure projectile
+(require 'projectile)
+(require 'projectile-mode)
+(projectile-global-mode)
+(setq projectile-completion-system 'ido)
+(setq projectile-sort-order 'recentf-active)
+(setq projectile-enable-caching t)
+(setq projectile-file-exists-remote-cache-expire (* 1 60))
+
+(global-set-key (kbd "M-p") 'projectile-commander)
+(global-set-key (kbd "C-M-g") 'projectile-find-file)
+
+; project subtree
+; adopted from https://blog.mads-hartmann.com/2016/05/12/emacs-tree-view.html
+; original author: Mads Hartmann <hello@mads-hartmann.com>
+(setq dired-subtree-use-backgrounds nil)
+(require 'dired)
+(require 'dired-subtree)
+(setq fit-window-to-buffer-horizontally t)
+(setq window-resize-pixelwise t)
+(defun dired-do-kill-lines-1 ()
+  (interactive)
+  (dired-do-kill-lines 1))
+(defun dired-open-file-in-previous-frame ()
+  "Open the selected file in the previous frame from dired."
+  (interactive)
+  (let ((file (dired-get-file-for-visit))
+        (current-frame (selected-frame))
+        (previous-frame nil))
+
+    (when (file-readable-p file)
+      (setq previous-frame (previous-frame current-frame))
+      (select-frame previous-frame)
+      (find-file file)
+      (select-frame current-frame))))
+(define-key dired-mode-map (kbd "<tab>") 'dired-subtree-toggle)
+(define-key dired-mode-map "e" 'fit-window-to-buffer)
+(define-key dired-mode-map "K" 'dired-do-kill-lines-1)
+(define-key dired-mode-map (kbd "O") 'dired-open-file-in-previous-frame)
+
+(defun mhj/toggle-project-explorer (flag)
+  "Toggle the project explorer window."
+  (interactive "P")
+  (let* ((buffer (dired-noselect (projectile-project-root)))
+    (window (get-buffer-window buffer)))
+    (if window
+    (mhj/hide-project-explorer)
+      (mhj/show-project-explorer flag))))
+(defun mhj/show-project-explorer (&optional flag)
+  "Project dired buffer on the side of the frame.
+Shows the projectile root folder using dired on the left side of
+the frame and makes it a dedicated window for that buffer."
+  (let ((buffer (dired-noselect (projectile-project-root))))
+    (if flag
+        (let ((displayed-frame nil))
+          ;; Check if buffer is displayed in any frame
+          (dolist (frame (frame-list))
+            (let ((windows (window-list frame)))
+              (when (find-if (lambda (w) (equal (window-buffer w) buffer)) windows)
+                (setq displayed-frame frame))))
+
+          ;; If displayed frame is found, focus it; otherwise, create a new frame to display buffer
+          (if displayed-frame
+              (select-frame-set-input-focus displayed-frame)
+            (display-buffer buffer '(display-buffer-pop-up-frame))))
+      (progn
+        (display-buffer-in-side-window
+         buffer
+         '((side . left)
+           (window-width . 0.2)
+           (window-preserved-size (nill . nill))))
+        (set-window-dedicated-p (get-buffer-window buffer) t)
+        (select-window (get-buffer-window buffer))))))
+(defun mhj/hide-project-explorer ()
+  "Hide the project-explorer window."
+  (let ((buffer (dired-noselect (projectile-project-root))))
+    (progn
+      (delete-window (get-buffer-window buffer)))))
+(global-set-key (kbd "M-e") 'mhj/toggle-project-explorer)
+
+;; ocaml related
+(defun dune-jump-to-build-dir ()
+  "Jump to the corresponding directory of the current buffer's file in the _build folder."
+  (interactive)
+  (let* ((default-directory (projectile-project-root))
+         (relative-file-dir (file-name-directory (file-relative-name buffer-file-name default-directory)))
+         (build-dir "_build/default")
+         (target-dir (concat default-directory build-dir "/" relative-file-dir)))
+    (if (file-directory-p target-dir)
+        (dired target-dir)
+      (message "Directory not found in _build: %s" target-dir))))
+(defun dune-jump-from-build-dir ()
+  "Jump back from the current buffer's file in the _build directory to the corresponding file outside of it."
+  (interactive)
+  (let* ((build-dir-regexp ".*/_build/default/")
+         (root-path (file-name-directory (buffer-file-name)))
+         (relative-file-name (replace-regexp-in-string build-dir-regexp "" root-path))
+         (default-directory (unless (string= root-path relative-file-name)
+                              (locate-dominating-file root-path "dune-project")))
+         (source-file (concat default-directory relative-file-name (file-name-nondirectory (buffer-file-name))))
+         )
+    (if (and default-directory (file-exists-p source-file))
+        (find-file source-file)
+      (message "Corresponding source file not found: %s" source-file))))
+
 ;; ;; for Proof General
 ;; (load-file "/usr/local/share/emacs/site-lisp/ProofGeneral/generic/proof-site.el")
 ;; (setq coq-prog-name "/usr/local/bin/coqtop")
 
-(global-set-key (kbd "C-S-o") 'other-frame)
+(defun reverse-other-frame (arg)
+  "Cycle through frames in reverse order."
+  (interactive "P")
+  (other-frame (- (if (null arg) 1 (prefix-numeric-value arg)))))
+(global-set-key (kbd "C-S-o") 'reverse-other-frame)
+(global-set-key (kbd "M-O") 'other-frame)
 (global-set-key (kbd "M-\\") "λ")
 (global-set-key (kbd "C-M-\\") "Λ")
 (electric-pair-mode t)
@@ -152,7 +263,7 @@
  '(TeX-view-program-selection '((output-pdf "TeXShop")))
  '(column-number-mode t)
  '(package-selected-packages
-   '(ocp-indent xterm-color cmake-mode yaml-mode proof-general dockerfile-mode clojure-mode livereload deferred dune auto-complete tuareg ddskk-posframe ddskk paredit pipenv hy-mode company markdown-mode scala-mode groovy-mode gradle-mode auctex magit-gerrit magit exec-path-from-shell emmet-mode haskell-mode ido-vertical-mode))
+   '(typescript-mode dired-subtree use-package dired ag projectile ocp-indent xterm-color cmake-mode yaml-mode proof-general dockerfile-mode clojure-mode livereload deferred dune auto-complete tuareg ddskk-posframe ddskk paredit pipenv hy-mode company markdown-mode scala-mode groovy-mode gradle-mode auctex magit-gerrit magit exec-path-from-shell emmet-mode haskell-mode ido-vertical-mode))
  '(safe-local-variable-values
    '((cider-shadow-cljs-default-options . "app")
      (cider-default-cljs-repl . shadow)

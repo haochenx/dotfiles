@@ -7,3 +7,16 @@
  ;; If there is more than one, they won't work right.
  '(TeX-view-program-list (quote (("TeXShop" ("open -aTeXShop %o")))))
  '(TeX-view-program-selection (quote ((output-pdf "TeXShop")))))
+
+(use-package dired
+  :ensure nil
+  :config
+  (progn
+    ; you need to perform brew install coreutils
+    ; on non Apple Silicon macs, use /opt/homebrew/opt/coreutils/libexec/gnubin/ls
+    ; on Apple Silicon macs, use /usr/local/opt/coreutils/libexec/gnubin/ls
+    (setq insert-directory-program "gls")
+    (setq dired-listing-switches "-lXGh --group-directories-first")
+    (add-hook 'dired-mode-hook 'dired-omit-mode)
+    (add-hook 'dired-mode-hook 'dired-hide-details-mode)))
+
