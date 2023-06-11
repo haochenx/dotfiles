@@ -45,3 +45,15 @@ function caml() {
     eval $(opam env --set-switch --switch="$1")
   fi
 }
+
+function backhist() {
+    (cd "$HOME" && \
+     mkdir -p bash_history_backup && \
+     gzip -c .bash_history > bash_history_backup/bash_history_$(date +%s).gz)
+}
+
+function ghc() {
+    echo "executing: gh pr checkout \"$1\""
+    gh pr checkout "$1"
+}
+
