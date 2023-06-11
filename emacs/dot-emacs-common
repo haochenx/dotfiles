@@ -78,7 +78,8 @@
                                           (project-root (projectile-project-root))
                                           (path-indicator (file-relative-name buffer-file-name project-root)))
                                      (if (and project-name path-indicator)
-                                         (concat " " project-name " - " path-indicator)
+                                         (concat " " (buffer-name) " [" project-name "]"
+                                                 (file-name-directory path-indicator))
                                        (concat " : %12b"))))
                                 "%12b")))
                          (t elem)))
@@ -131,13 +132,21 @@
   (interactive)
   (add-hook 'compilation-finish-functions 'bury-compile-buffer-if-successful)
   (setq windows-before-compilation (length (window-list)))
-  (let ((process-environment (cons "CLICOLOR=0" process-environment)))
+  (let*
+      ((project-root (projectile-project-root))
+       (process-environment (cons "CLICOLOR=0" process-environment))
+       (default-directory
+         (if project-root project-root
+           (and (buffer-file-name)
+                (file-name-directory (buffer-file-name))))))
     (call-interactively #'compile)))
 
 (require 'bind-key)
 (require 'tuareg)
+(require 'dune)
 (bind-key (kbd "C-c C-c") 'my-compile)
 (define-key tuareg-mode-map (kbd "C-c C-c") 'my-compile)
+(define-key dune-mode-map (kbd "C-c C-c") 'my-compile)
 
 (push '("\\*compilation\\*"
         display-buffer-in-side-window
