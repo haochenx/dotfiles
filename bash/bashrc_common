@@ -52,8 +52,16 @@ function backhist() {
      gzip -c .bash_history > bash_history_backup/bash_history_$(date +%s).gz)
 }
 
-function ghc() {
-    echo "executing: gh pr checkout \"$1\""
+function gpc() {
+    echo "executing: gh pr checkout" "$@"
     gh pr checkout "$1"
 }
 
+function gpv() {
+    echo "executing: gh pr view" "$@"
+    gh pr view "$@"
+}
+
+function gpw() {
+    gpv -w "$@"
+}
