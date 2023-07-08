@@ -15,6 +15,7 @@
     ds = diff --staged
 
     ci = commit
+    csm = commit -s -m
     cm = commit -m
     cmm = commit -Ssm
     ca = commit --amend
