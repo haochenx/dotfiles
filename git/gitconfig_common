@@ -29,10 +29,10 @@
 
     stat = show HEAD --stat
 
-    fa = fetch --all
+    fa = fetch --all -j0
     mff = merge --ff-only
-    fam = !git fetch --all && git merge --ff-only
-    fams = !git fetch --all && git merge --ff-only && git submodule update --init
+    fam = !git fetch --all -j0 && git merge --ff-only
+    fams = !git fetch --all -j0 && git merge --ff-only && git submodule update --init
     fco = !git fa && git co
     fcom = "!git fa && git co \"$1\" && git mff #"
 
