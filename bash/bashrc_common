@@ -52,18 +52,71 @@ function backhist() {
      gzip -c .bash_history > bash_history_backup/bash_history_$(date +%s).gz)
 }
 
-function gpc() {
+function gghelp() {
+    cat << EOF
+------------
+>>> Pure Git
+------------
+gita - git add (bonus: gita. = 'gita . ARGS && gg')
+gitr - git reset
+gco  - git checkout
+
+gg - git status
+
+ .l - git log             [ggl]
+
+ .s - git diff (staged)   [ggs]
+ .f - git diff (unstaged) [ggf]
+
+ .vv - git show           [ggvv]
+ .v  - git show --stat    [ggv]
+
+-------------------
+>>> GitHub Specific
+-------------------
+ghco - pr checkout
+
+ghpr - pr create
+
+ghpv - pr view (browser)
+ghpv-cli - pr view (cli)
+EOF
+}
+
+function ghco() {
     echo "executing: gh pr checkout" "$@"
     gh pr checkout "$1"
 }
 
-function gpv() {
+function ghpv() {
+    echo "executing: gh pr view -w" "$@"
+    gh pr view -w "$@"
+}
+
+function ghpv-cli() {
     echo "executing: gh pr view" "$@"
     gh pr view "$@"
 }
 
-function gpw() {
-    gpv -w "$@"
+function ghpr() {
+    echo "executing: gh pr create" "$@"
+    gh pr create "$@"
+}
+
+alias lsport='lsof -iTCP -sTCP:LISTEN -n -P'
+
+alias gitr='git reset'
+alias gco='git checkout'
+alias gg='git status'
+alias ggl='git log'
+alias ggf='git df'
+alias ggs='git ds'
+alias ggv='git show --stat'
+alias ggvv='git show'
+
+alias gita='git add'
+function gita.() {
+    gita . "$@" && gg
 }
 
 function bam() {
