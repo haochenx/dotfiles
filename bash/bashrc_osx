@@ -2,3 +2,8 @@
 
 # override alias of ls
 alias ls='ls -GF'
+
+# clean up the Desktop
+function bam() {
+    find "$HOME/Desktop" -depth 1 -not -path "$HOME/Desktop/rabbit-hole" -not -name '.DS_Store' -print0 | xargs -0 -n1 -I{} mv -v {} "$HOME/Desktop/rabbit-hole"
+}

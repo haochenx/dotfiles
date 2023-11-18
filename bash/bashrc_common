@@ -124,7 +124,3 @@ alias "gita.."='gita ..'
 function gitaa() {
     gita "$@" -- "$(git rev-parse --show-toplevel)"
 }
-
-function bam() {
-    find "$HOME/Desktop" -depth 1 -not -path "$HOME/Desktop/rabbit-hole" -not -name '.DS_Store' -print0 | xargs -0 -n1 -I{} mv -v {} "$HOME/Desktop/rabbit-hole"
-}
