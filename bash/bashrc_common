@@ -57,7 +57,9 @@ function gghelp() {
 ------------
 >>> Pure Git
 ------------
-gita - git add (bonus: gita. = 'gita . ARGS && gg')
+gita - git add & git status
+  . bonus: gitaa          = gita for the whole repositiory
+  . bonus: gita. / gita.. = gita for the current / parent dir
 gitr - git reset
 gco  - git checkout
 
@@ -114,9 +116,13 @@ alias ggs='git ds'
 alias ggv='git show --stat'
 alias ggvv='git show'
 
-alias gita='git add'
-function gita.() {
-    gita . "$@" && gg
+function gita() {
+    git add "$@" && gg
+}
+alias "gita."='gita .'
+alias "gita.."='gita ..'
+function gitaa() {
+    gita "$@" -- "$(git rev-parse --show-toplevel)"
 }
 
 function bam() {
