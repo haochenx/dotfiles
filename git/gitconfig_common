@@ -23,6 +23,10 @@
     caa = commit --amend --no-edit
     ss = commit --amend  --no-edit -S
 
+    cmp = "!f() { git cm \"$@\" && git push; }; f"
+    cmpf = "!f() { git cm \"$@\" && git push -f; }; f"
+    caapf = !git caa && git push -f
+
     lol = log --graph --decorate --pretty=oneline --abbrev-commit
     lola = log --graph --decorate --pretty=oneline --abbrev-commit --all --date=local
     bb = !git reflog | grep 'checkout: moving from' | cut -d' ' -f 6 | awk '!seen[$0]++' | head
