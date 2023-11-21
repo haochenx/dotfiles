@@ -91,6 +91,7 @@
 
 (global-set-key (kbd "M-p") 'projectile-commander)
 (global-set-key (kbd "C-M-g") 'projectile-find-file)
+(global-set-key (kbd "C-M-S-g") 'projectile-invalidate-cache)
 (global-set-key (kbd "M-S") 'projectile-switch-open-project)
 
 (defvar windows-before-compilation 0
