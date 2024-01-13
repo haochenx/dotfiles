@@ -19,6 +19,9 @@
     (goto-char p))
 )
 (global-set-key (kbd "C-M-j") 'hx/duplicate-current-line)
+(global-set-key (kbd "M-o") 'other-window)
+(global-set-key (kbd "M-O")
+ (lambda () (interactive) (other-window -1)))
 
 ;; Additional Repositories
 (require 'package)
