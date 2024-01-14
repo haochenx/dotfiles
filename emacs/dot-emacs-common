@@ -52,7 +52,7 @@
 (setq ido-vertical-define-keys 'C-n-and-C-p-only)
 
 (setq linum-format "%d ")
-(global-linum-mode 1)
+(global-display-line-numbers-mode 1)
 
 (column-number-mode t)
 
