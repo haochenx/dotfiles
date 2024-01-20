@@ -45,6 +45,40 @@
 (setq-default abbrev-mode t)
 (global-set-key (kbd "C-'") 'expand-abbrev)
 
+;; treesitter configuration
+(setq treesit-language-source-alist
+   '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+     (cmake "https://github.com/uyha/tree-sitter-cmake")
+     (css "https://github.com/tree-sitter/tree-sitter-css")
+     (elisp "https://github.com/Wilfred/tree-sitter-elisp")
+     (html "https://github.com/tree-sitter/tree-sitter-html")
+     (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
+     (json "https://github.com/tree-sitter/tree-sitter-json")
+     (make "https://github.com/alemuller/tree-sitter-make")
+     (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+     (python "https://github.com/tree-sitter/tree-sitter-python")
+     (toml "https://github.com/tree-sitter/tree-sitter-toml")
+     (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+     (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+     (yaml "https://github.com/ikatyang/tree-sitter-yaml")
+     ;; (curlymark "/komo/arck/camlsrc/curlymark/tree-sitter-curlymark")
+     ))
+(setq treesit-font-lock-level 4)
+(if nil
+    ;; run the following to install treesitter grammars
+    (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist)))
+
+(if nil
+    ;; currently treesit modes are kinda slow thus I'd not like to enable them by default
+    (setq major-mode-remap-alist
+          '((yaml-mode . yaml-ts-mode)
+            (bash-mode . bash-ts-mode)
+            (js2-mode . js-ts-mode)
+            (typescript-mode . typescript-ts-mode)
+            (json-mode . json-ts-mode)
+            (css-mode . css-ts-mode)
+            (python-mode . python-ts-mode))))
+
 ; Configure ido-mode
 (require 'ido-vertical-mode)
 (ido-mode t)
@@ -354,7 +388,7 @@ the frame and makes it a dedicated window for that buffer."
  '(TeX-view-program-selection '((output-pdf "TeXShop")))
  '(column-number-mode t)
  '(package-selected-packages
-   '(editorconfig editorconfig-mode typescriptf-mode dired-subtree use-package dired ag projectile ocp-indent xterm-color cmake-mode yaml-mode proof-general dockerfile-mode clojure-mode livereload deferred dune auto-complete tuareg ddskk-posframe ddskk paredit pipenv hy-mode company markdown-mode scala-mode groovy-mode gradle-mode auctex magit-gerrit magit exec-path-from-shell emmet-mode haskell-mode ido-vertical-mode editorconfig-mod))
+   '(flycheck editorconfig editorconfig-mode typescriptf-mode dired-subtree use-package dired ag projectile ocp-indent xterm-color cmake-mode yaml-mode proof-general dockerfile-mode clojure-mode livereload deferred dune auto-complete tuareg ddskk-posframe ddskk paredit pipenv hy-mode company markdown-mode scala-mode groovy-mode gradle-mode auctex magit-gerrit magit exec-path-from-shell emmet-mode haskell-mode ido-vertical-mode editorconfig-mod))
  '(safe-local-variable-values
    '((cider-shadow-cljs-default-options . "app")
      (cider-default-cljs-repl . shadow)
