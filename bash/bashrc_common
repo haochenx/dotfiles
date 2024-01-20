@@ -122,6 +122,8 @@ function gita() {
 }
 alias "gita."='gita .'
 alias "gita.."='gita ..'
+alias "gco."='git co .'
+alias "gco.."='git co ..'
 function gitaa() {
     gita "$@" -- "$(git rev-parse --show-toplevel)"
 }
