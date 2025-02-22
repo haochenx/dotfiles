@@ -2,5 +2,6 @@
 
 FIN="$1"
 ffmpeg -i "$FIN" -vf "scale=iw*.333:-1" -r 6 -c:v pam -f image2pipe - | convert -delay 6 - -layers optimize "${FIN%.mov}.gif"
+#ffmpeg -i "$FIN" -vf "scale=iw*.333:-1" -r 60 -c:v pam -f image2pipe - | convert -delay 6 - -layers optimize "${FIN%.mov}.gif"
 
 # brew install ffmpeg imagemagick

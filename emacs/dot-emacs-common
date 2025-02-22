@@ -35,14 +35,14 @@
 (package-initialize)
 
 ;; Install required packages
-(let ((package-list '(auto-complete ido-vertical-mode haskell-mode emmet-mode exec-path-from-shell magit magit-gerrit auctex gradle-mode groovy-mode scala-mode typescript-mode markdown-mode antlr-mode ansi-color deferred ocp-indent tuareg dune yaml-mode xterm-color use-package projectile dired-subtree ag editorconfig)))
+(let ((package-list '(auto-complete ido-vertical-mode haskell-mode emmet-mode exec-path-from-shell magit magit-gerrit auctex gradle-mode groovy-mode scala-mode typescript-mode markdown-mode antlr-mode ansi-color deferred ocp-indent tuareg dune yaml-mode xterm-color use-package projectile dired-subtree ag editorconfig zig-mode)))
   (dolist (package package-list)
     (unless (package-installed-p package)
       (unless package-archive-contents
         (package-refresh-contents))
       (package-install package))))
 
-(setq-default abbrev-mode t)
+(setq-default abbrev-mode nil)
 (global-set-key (kbd "C-'") 'expand-abbrev)
 
 ;; treesitter configuration
@@ -189,6 +189,8 @@
 (require 'dune)
 (bind-key (kbd "C-c C-c") 'my-compile)
 (define-key tuareg-mode-map (kbd "C-c C-c") 'my-compile)
+(define-key tuareg-mode-map (kbd "C-c C-r") 'merlin-error-check)
+(define-key tuareg-mode-map (kbd "M-g f") 'merlin-occurrences)
 (define-key dune-mode-map (kbd "C-c C-c") 'my-compile)
 
 (push '("\\*compilation\\*"
@@ -292,6 +294,10 @@ the frame and makes it a dedicated window for that buffer."
 ;; ;; for Proof General
 ;; (load-file "/usr/local/share/emacs/site-lisp/ProofGeneral/generic/proof-site.el")
 ;; (setq coq-prog-name "/usr/local/bin/coqtop")
+(setq auto-mode-alist
+      (delete '("\\.[ds]?va?h?\\'" . verilog-mode)
+              (delete '("\\.v\\'" . coq-mode)
+                      auto-mode-alist)))
 
 (defun reverse-other-frame (arg)
   "Cycle through frames in reverse order."
@@ -388,7 +394,7 @@ the frame and makes it a dedicated window for that buffer."
  '(TeX-view-program-selection '((output-pdf "TeXShop")))
  '(column-number-mode t)
  '(package-selected-packages
-   '(flycheck editorconfig editorconfig-mode typescriptf-mode dired-subtree use-package dired ag projectile ocp-indent xterm-color cmake-mode yaml-mode proof-general dockerfile-mode clojure-mode livereload deferred dune auto-complete tuareg ddskk-posframe ddskk paredit pipenv hy-mode company markdown-mode scala-mode groovy-mode gradle-mode auctex magit-gerrit magit exec-path-from-shell emmet-mode haskell-mode ido-vertical-mode editorconfig-mod))
+   '(native-complete mistty elpy python-mode zig-mode flycheck editorconfig editorconfig-mode typescriptf-mode dired-subtree use-package dired ag projectile ocp-indent xterm-color cmake-mode yaml-mode proof-general dockerfile-mode clojure-mode livereload deferred dune auto-complete tuareg ddskk-posframe ddskk paredit pipenv hy-mode company markdown-mode scala-mode groovy-mode gradle-mode auctex magit-gerrit magit exec-path-from-shell emmet-mode haskell-mode ido-vertical-mode editorconfig-mod))
  '(safe-local-variable-values
    '((cider-shadow-cljs-default-options . "app")
      (cider-default-cljs-repl . shadow)
@@ -456,4 +462,40 @@ the frame and makes it a dedicated window for that buffer."
   (if (display-graphic-p)
       (disable-theme 'deeper-blue)
     (enable-theme 'deeper-blue)))
+
+(defun comint-serial (port speed coding buf)
+  "Open a serial port and enable comint mode"
+  (interactive
+   (list
+    (read-file-name "Port file " "/dev/cu.")
+    (read-number "Baud " 115200)
+    (read-string "Coding " "utf-8-dos")
+    (read-buffer "Buffer " "*serial-term*")))
+  (make-serial-process
+   :port port
+   :speed speed
+   :coding (intern coding)
+   :buffer buf)
+  (switch-to-buffer buf)
+  (comint-mode)
+  (term-char-mode))
+
+(defun open-serial (port speed
+                         coding
+                         buf)
+  "Open a serial port and enable term mode"
+  (interactive
+   (list
+    (read-file-name "Port file " "/dev/cu.")
+    (read-number "Baud " 115200)
+    (read-string "Coding " "utf-8-dos")
+    (read-buffer "Buffer " "*serial-term*")))
+  (make-serial-process
+   :port port
+   :speed speed
+   :coding (intern coding)
+   :buffer buf)
+  (switch-to-buffer buf)
+  (term-mode))
+
 
